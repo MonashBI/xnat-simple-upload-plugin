@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PushToXNAT</title>
+    <link rel="stylesheet" type="text/css" href="app.css?v=1.7.0a2">
+    <script src="jquery.min.js"></script>
+    <script>
+
+        // for plugin build
+        var XNAT_URL ;
+        //for testing
+        //var XNAT_URL = 'http://118.138.240.190/xnat-web-1.7.3';
+
+        $(document).ready(function() {
+            var url = document.location.origin;
+            var pathArray = document.location.pathname.split('/');
+            console.log(pathArray)
+            if(pathArray.length > 3){
+                XNAT_URL = url + "/" + pathArray[1];
+            }else{
+                XNAT_URL = url;
+            }
+            // TODO: prevent forced yellow input background in chrome
+            console.log(XNAT_URL);
+            //submit form
+            $("#login_form").submit(function(event) {
+                event.preventDefault();
+                $(':input[type="submit"]').prop('disabled', true);
+                var data;
+                data = new FormData($('login_form')[0]);
+                var datasetName = $("#datasetName").val();
+                var sessionName = $("#sessionName").val();
+                var split = sessionName.split("_");
+                var projectId = split[0];
+                var subjectId = projectId+'_'+split[1];
+                //check if create session is true
+                if($('#createSession').is(':checked')){
+                    //create subject
+                    createSubject(projectId,subjectId);
+                    //create session
+                    var sessionId = sessionName;
+                    createSession(projectId,subjectId,sessionId);
+                }else{
+                    //validate sessionId and dataset
+                    //create dataset
+                }
+                $.ajax({
+                    type: 'PUT',
+                    url: XNAT_URL+'/data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'?xsiType=xnat:mrScanData',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    async: false,
+                    headers: {
+                        'Content-Type':'application/x-www-form-urlencoded',
+                        'jsessionid': jsessionId,
+                    },
+                    success: function(response, status, xhr) {
+                        console.log(response.status)
+                        //upload file
+                        uploadFile(projectId,subjectId,sessionName,datasetName);
+                    },
+                    error: function(response) {
+                        console.log(response)
+                    }
+                });
+            });
+            function createSubject(projectId, subjectId){
+                $.ajax({
+                    type: 'PUT',
+                    url: XNAT_URL+'/data/archive/projects/'+projectId+'/subjects/'+subjectId,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    async: false,
+                    headers: {
+                        'Content-Type':'application/x-www-form-urlencoded',
+                        'jsessionid': jsessionId,
+                    },
+                    success: function(response, status, xhr) {
+                        console.log(response)
+                        return response;
+                    },
+                    error: function(response) {
+                        console.log(response)
+                    }
+                });
+            }
+            function createSession(projectId, subjectId, sessionId){
+                $.ajax({
+                    type: 'PUT',
+                    url: XNAT_URL+'/data/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionId+'?xnat:mrSessionData/',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    async: false,
+                    headers: {
+                        'Content-Type':'application/x-www-form-urlencoded',
+                        'jsessionid': jsessionId,
+                    },
+                    success: function(response, status, xhr) {
+                        console.log(response.status)
+                    },
+                    error: function(response) {
+                        console.log(response)
+                    }
+                });
+            }
+            function uploadFile(projectId, subjectId, sessionName,datasetName){
+                var form = new FormData();
+                //form.append("fileName", "app.css");
+                var file = $('input[type=file]')[0].files[0];
+                form.append('file', file);
+                var fileName = file.name;
+                $.ajax({
+                    type: 'POST',
+                    url: XNAT_URL +'/data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'/resources/DICOM/files/'+fileName,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    //Form data
+                    "processData": false,
+                    "contentType": false,
+                    "mimeType": "multipart/form-data",
+                    "data": form,
+                     xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function (evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = evt.loaded / evt.total;
+                                percentComplete = parseInt(percentComplete * 100);
+                                $('.myprogress').text(percentComplete + '%');
+                                $('.progress').css({'display':'block'});
+                                $('.myprogress').css('width', percentComplete + '%');
+                            }
+                        }, false);
+                        return xhr;
+                    },
+		    headers: {
+                        'jsessionid': jsessionId,
+                    },
+                    success: function(response, status, xhr) {
+                        //console.log(response.status)
+                        $('.msg').css({'color':'green'});
+
+                        $('.msg').text(fileName+" uploaded successfully");
+                        $(':input[type="submit"]').prop('disabled', false);
+                        //alert("file uploaded successfully");
+                    },
+                    error: function(response) {
+                        console.log(response)
+                        alert("Could not upload file ..." +response.status);
+                    }
+                });
+            }
+        });
+
+    </script>
+
+</head>
+<body>
+
+<div id="user_bar" class="no_menu">
+    <div class="clear">
+    </div>
+</div>
+<div id="page_wrapper">
+
+    <div id="header" class="main_header"><div class="pad">
+        <a id="header_logo" href="Put XNAT URL">
+            <img class="logo_img" src="logo.png" style="border:none;">    </a>
+    </div></div>
+    <div id="layout_content2" style="display:none;">Loading...</div>
+    <div id="layout_content">
+        <!--
+        <script src="/xnat-web-1.7.0/scripts/lib/epicEditor/js/epiceditor.js"></script>
+        -->
+        <div id="form_area">
+            <div id="DescriptionDiv">
+                <p>A place holder text</p>
+                <p>Use this page to push your session data to XNAT.....  </p>
+
+            </div>
+            <div id="login_box" style="float: none; margin-top: 20px;margin-left: 40%">
+                <form name="form1"  class="friendlyForm" id="login_form">
+
+                    <!-- username and password -->
+                    <p><label for="userName">XNAT User Name</label>
+                        <input type="text" id="userName" name="userName"></p>
+                    <p><label for="password">XNAT User Password</label>
+                        <input type="password" id="password" name="password">
+                        <span id="successfulAuth" style="color:green; display:none">Authentication Successful</span>
+                        <span id="unSuccessfulAuth" style="color:red; display:none">Please check XNAT username and password</span>
+                    </p>
+
+                    <!-- SessionName, datasetName -->
+                    <p><label for="sessionName">Session Name</label>
+                        <input type="text" id="sessionName" name="sessionName">
+                        <input type="checkbox" id="createSession" name="createSession" value="CreateSession" disabled>Create Session</p>
+                    </p>
+
+                    <p><label for="datasetName">Dataset Name</label>
+                        <input type="text" id="datasetName" name="datasetName"></p>
+
+                    <p><label for="filePath">File Path</label>
+                        <input type="file" name="filePath"></p>
+                     <div class="progress" style="display:none">
+                        <div>File upload progress: </div>
+                        <div class="progress-bar progress-bar-success myprogress" role="progressbar" style="width:0%">0%</div>
+                    </div>
+
+                    <div class="msg"></div>
+                    <p class="form-submit">
+                        <button class="submit btn" id="sendButton" type="submit" name="Send">Send</button>
+                    </p>
+                    <!-- Issue with CSRF token
+                    <input type="hidden" name="XNAT_CSRF" value="">
+                    -->
+                </form>
+            </div>
+            <div class="clear"></div>
+
+        </div>
+    </div>
+</div>
+<div id="xnat_power">
+    <a target="_blank" href="http://www.xnat.org/" style="">
+        <img src="xnat_power_small.jpg">
+    </a>
+</div>
+<script>
+    var jsessionId ;
+    var project_id ;
+    var experiment_id;
+    var xsiType;
+    var datasetName;
+    $("#userName, #password").on('change',function(e) {
+        var user = $("#userName").val();
+        var password = $("#password").val();
+        if(user!="" & password!=""){
+            $.ajax({
+                type: 'POST',
+                url: XNAT_URL+ '/data/JSESSION',
+                aync: false,
+                //authentication
+                beforeSend: function (xhr) {
+
+                    xhr.setRequestHeader ("Authorization", "Basic " + btoa(user + ":" + password))
+                },
+                xhrFields: {
+                    withCredentials: false,
+                },
+                headers: {
+                    'Content-Type':'application/x-www-form-urlencoded',
+                },
+                success: function(response, status, xhr) {
+                    console.log(response);
+                    $("#unSuccessfulAuth").css("display","none");
+                    $("#successfulAuth").css("display","block");
+                    jsessionId = response;
+                },
+                error: function(response) {
+                    console.log(response);
+                    $("#successfulAuth").css("display","none");
+                    $("#unSuccessfulAuth").css("display","block");
+                }
+            });
+        }
+
+    });
+    $("#sessionName").on('input autocompletechange',function(e) {
+        //console.log(jsessionId);
+        var sessionName = $("#sessionName").val();
+        $.ajax({
+            type: 'GET',
+            dataType : "json",
+            url: XNAT_URL+'/data/archive/experiments?label='+sessionName,
+            xhrFields: {
+                withCredentials: true
+            },
+            async: false,
+            headers: {
+                'Content-Type':'application/x-www-form-urlencoded',
+                'jsessionid': jsessionId,
+            },
+            success: function(response, status, xhr) {
+                console.log(status);
+                var resultset = response.ResultSet.totalRecords;
+                if(resultset > 0){
+
+                    $('#sessionName').css({'color':'green'});
+                    $('#createSession').prop('checked', false);
+                    $('#createSession').prop('disabled', true);
+                    project_id = response.ResultSet.Result["0"].project;
+                    experiment_id = response.ResultSet.Result["0"].ID;
+                    xsiType = response.ResultSet.Result["0"].xsiType
+                }
+                else{
+                    $('#sessionName').css({'color':'red'});
+                    $('#createSession').prop('disabled', false);
+                }
+            },
+            error: function(response) {
+                //console.log(response)
+            }
+        });
+    });
+
+    $("#datasetName").on('input',function(e) {
+        // if session name exist, then check for dataset
+        // if session name does not exist, create session and dataset
+        if($('#createSession').is(':checked')){
+            //don't validate dataset name
+            $('#datasetName').css({'color':'green'});
+        }else{
+            //validate dataset name
+            datasetName = $("#datasetName").val();
+            var sessionName = $("#sessionName").val();
+            //
+            $.ajax({
+                type: 'GET',
+                dataType : "json",
+                url: XNAT_URL+'/data/experiments/'+experiment_id+'/scans',
+                xhrFields: {
+                    withCredentials: true
+                },
+                headers: {
+                    'Content-Type':'application/x-www-form-urlencoded',
+                    'jsessionid': jsessionId,
+                },
+                success: function(response, status, xhr) {
+                    var responseObjArray = response.ResultSet.Result;
+                    var found = 0;
+                    for(var obj in responseObjArray){
+                        if(responseObjArray[obj].ID==datasetName){
+                            found = 1;
+                        }
+                    }
+                    if(found==1){
+                        $('#datasetName').css({'color':'red'});
+                    }else{
+                        $('#datasetName').css({'color':'green'});
+                    }
+                },
+                error: function(response) {
+                    //console.log(response)
+                }
+            });
+        }
+
+    });
+</script>
+</body>
+</html>
