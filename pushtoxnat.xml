@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="pushtoxnat" default="all">
+  
+  
+  <property file="pushtoxnat.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.ane"/>
+    <include name="*.zip"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/access-bridge-64.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunmscapi.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module PushToXNAT -->
+  
+  <dirname property="module.pushtoxnat.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.pushtoxnat" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pushtoxnat" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pushtoxnat" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pushtoxnat" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
+  
+  <property name="pushtoxnat.output.dir" value="${module.pushtoxnat.basedir}/out/production/PushToXNAT"/>
+  <property name="pushtoxnat.testoutput.dir" value="${module.pushtoxnat.basedir}/out/test/PushToXNAT"/>
+  
+  <path id="pushtoxnat.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pushtoxnat.module.production.classpath">
+    <path refid="${module.jdk.classpath.pushtoxnat}"/>
+  </path>
+  
+  <path id="pushtoxnat.runtime.production.module.classpath">
+    <pathelement location="${pushtoxnat.output.dir}"/>
+  </path>
+  
+  <path id="pushtoxnat.module.classpath">
+    <path refid="${module.jdk.classpath.pushtoxnat}"/>
+    <pathelement location="${pushtoxnat.output.dir}"/>
+  </path>
+  
+  <path id="pushtoxnat.runtime.module.classpath">
+    <pathelement location="${pushtoxnat.testoutput.dir}"/>
+    <pathelement location="${pushtoxnat.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pushtoxnat">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pushtoxnat">
+    <patternset refid="excluded.from.module.pushtoxnat"/>
+  </patternset>
+  
+  
+  <target name="compile.module.pushtoxnat" depends="compile.module.pushtoxnat.production,compile.module.pushtoxnat.tests" description="Compile module PushToXNAT"/>
+  
+  <target name="compile.module.pushtoxnat.production" depends="register.custom.compilers" description="Compile module PushToXNAT; production classes"/>
+  
+  <target name="compile.module.pushtoxnat.tests" depends="register.custom.compilers,compile.module.pushtoxnat.production" description="compile module PushToXNAT; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pushtoxnat" description="cleanup module">
+    <delete dir="${pushtoxnat.output.dir}"/>
+    <delete dir="${pushtoxnat.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.pushtoxnat" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.pushtoxnat" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.pushtoxnat" value="${basedir}/out/artifacts/PushToXNAT"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.PushToXNAT.jar" value="${artifacts.temp.dir}/PushToXNAT.jar"/>
+  </target>
+  
+  <target name="artifact.pushtoxnat" depends="init.artifacts" description="Build &#39;PushToXNAT&#39; artifact">
+    <property name="artifact.temp.output.pushtoxnat" value="${artifacts.temp.dir}/PushToXNAT"/>
+    <mkdir dir="${artifact.temp.output.pushtoxnat}"/>
+    <jar destfile="${temp.jar.path.PushToXNAT.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset file="${basedir}/META-INF/MANIFEST.MF" prefix="META-INF"/>
+      <zipfileset file="${basedir}/app.css" prefix="META-INF/resources/pages"/>
+      <zipfileset file="${basedir}/jquery.min.js" prefix="META-INF/resources/pages"/>
+      <zipfileset file="${basedir}/logo.png" prefix="META-INF/resources/pages"/>
+      <zipfileset file="${basedir}/PushToXNAT.html" prefix="META-INF/resources/pages"/>
+      <zipfileset file="${basedir}/xnat_power_small.jpg" prefix="META-INF/resources/pages"/>
+    </jar>
+    <copy file="${temp.jar.path.PushToXNAT.jar}" tofile="${artifact.temp.output.pushtoxnat}/PushToXNAT.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.pushtoxnat" description="Build all artifacts">
+    <mkdir dir="${artifact.output.pushtoxnat}"/>
+    <copy todir="${artifact.output.pushtoxnat}">
+      <fileset dir="${artifact.temp.output.pushtoxnat}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
