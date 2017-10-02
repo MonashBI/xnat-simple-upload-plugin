@@ -113,8 +113,8 @@
   
   <property name="compiler.args.pushtoxnat" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
   
-  <property name="pushtoxnat.output.dir" value="${module.pushtoxnat.basedir}/out/production/PushToXNAT"/>
-  <property name="pushtoxnat.testoutput.dir" value="${module.pushtoxnat.basedir}/out/test/PushToXNAT"/>
+  <property name="pushtoxnat.output.dir" value="${module.pushtoxnat.basedir}/out/production/non-dicom-uploader"/>
+  <property name="pushtoxnat.testoutput.dir" value="${module.pushtoxnat.basedir}/out/test/non-dicom-uploader"/>
   
   <path id="pushtoxnat.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
@@ -169,23 +169,23 @@
   
   <target name="init.artifacts">
     <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
-    <property name="artifact.output.pushtoxnat" value="${basedir}/out/artifacts/PushToXNAT"/>
+    <property name="artifact.output.pushtoxnat" value="${basedir}/out/artifacts/non-dicom-uploader"/>
     <mkdir dir="${artifacts.temp.dir}"/>
-    <property name="temp.jar.path.PushToXNAT.jar" value="${artifacts.temp.dir}/PushToXNAT.jar"/>
+    <property name="temp.jar.path.PushToXNAT.jar" value="${artifacts.temp.dir}/non-dicom-uploader.jar"/>
   </target>
   
   <target name="artifact.pushtoxnat" depends="init.artifacts" description="Build &#39;PushToXNAT&#39; artifact">
-    <property name="artifact.temp.output.pushtoxnat" value="${artifacts.temp.dir}/PushToXNAT"/>
+    <property name="artifact.temp.output.pushtoxnat" value="${artifacts.temp.dir}/non-dicom-uploader"/>
     <mkdir dir="${artifact.temp.output.pushtoxnat}"/>
     <jar destfile="${temp.jar.path.PushToXNAT.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
       <zipfileset file="${basedir}/META-INF/MANIFEST.MF" prefix="META-INF"/>
       <zipfileset file="${basedir}/app.css" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/jquery.min.js" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/logo.png" prefix="META-INF/resources/pages"/>
-      <zipfileset file="${basedir}/PushToXNAT.html" prefix="META-INF/resources/pages"/>
+      <zipfileset file="${basedir}/non-dicom-upload.html" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/xnat_power_small.jpg" prefix="META-INF/resources/pages"/>
     </jar>
-    <copy file="${temp.jar.path.PushToXNAT.jar}" tofile="${artifact.temp.output.pushtoxnat}/PushToXNAT.jar"/>
+    <copy file="${temp.jar.path.PushToXNAT.jar}" tofile="${artifact.temp.output.pushtoxnat}/non-dicom-uploader.jar"/>
   </target>
   
   <target name="build.all.artifacts" depends="artifact.pushtoxnat" description="Build all artifacts">
