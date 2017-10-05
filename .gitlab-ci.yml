@@ -1,3 +1,6 @@
 build:
   script:
     - ant build.all.artifacts
+   artifacts:
+    paths:
+    - /out/artifacts/non-dicom-uploader/non-dicom-uploader.jar
