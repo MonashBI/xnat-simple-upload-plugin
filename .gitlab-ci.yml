@@ -3,4 +3,4 @@ build:
     - ant build.all.artifacts
   artifacts:
     paths:
-    - /out/artifacts/non-dicom-uploader/non-dicom-uploader.jar
+    - out/artifacts/non-dicom-uploader/non-dicom-uploader.jar
