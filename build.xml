@@ -184,6 +184,7 @@
       <zipfileset file="${basedir}/logo.png" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/non-dicom-upload.html" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/xnat_power_small.jpg" prefix="META-INF/resources/pages"/>
+      <zipfileset file="${basedir}/resource_extension_map.JSON" prefix="META-INF/resources/pages"/>
     </jar>
     <copy file="${temp.jar.path.PushToXNAT.jar}" tofile="${artifact.temp.output.pushtoxnat}/non-dicom-uploader.jar"/>
   </target>
