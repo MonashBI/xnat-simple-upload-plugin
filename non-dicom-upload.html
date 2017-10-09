@@ -9,6 +9,7 @@
 
         // for plugin build
         var XNAT_URL ;
+        var resource_extension_map = {};
         //for testing
         //var XNAT_URL = 'http://118.138.240.190/xnat-web-1.7.3';
 
@@ -23,6 +24,13 @@
             }
             // TODO: prevent forced yellow input background in chrome
             console.log(XNAT_URL);
+            //load extension Type map
+            $.getJSON( "resource_extension_map.JSON", function( data ) {
+                $.each( data, function( key, val ) {
+                    resource_extension_map[val] = key;
+                });
+                console.log(resource_extension_map);
+            });
             //submit form
             $("#login_form").submit(function(event) {
                 event.preventDefault();
@@ -113,9 +121,12 @@
                 var file = $('input[type=file]')[0].files[0];
                 form.append('file', file);
                 var fileName = file.name;
+                var extension = getExtension(fileName);
+                var resourceType = getResourceType(extension);
+                console.log(resourceType);
                 $.ajax({
                     type: 'POST',
-                    url: XNAT_URL +'/data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'/resources/DICOM/files/'+fileName,
+                    url: XNAT_URL +'/data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'/resources/'+resourceType+'/files/'+fileName,
                     xhrFields: {
                         withCredentials: true
                     },
@@ -153,6 +164,15 @@
                         alert("Could not upload file ..." +response.status);
                     }
                 });
+            }
+            function getExtension(fileName) {
+                var firstIndexofDot = fileName.indexOf(".");
+                var extension = fileName.substr(firstIndexofDot);
+                return extension;
+            }
+            function getResourceType(extension){
+                var resourceType = resource_extension_map[extension];
+                return resourceType;
             }
         });
 
