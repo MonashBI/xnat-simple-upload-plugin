@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="pushtoxnat" default="all">
+<project name="simpleupload" default="all">
   
   
-  <property file="pushtoxnat.properties"/>
+  <property file="simpleupload.properties"/>
   <!-- Uncomment the following property if no tests compilation is needed -->
   <!-- 
   <property name="skip.tests" value="true"/>
@@ -104,79 +104,79 @@
   
   <!-- Module PushToXNAT -->
   
-  <dirname property="module.pushtoxnat.basedir" file="${ant.file}"/>
+  <dirname property="module.simpleupload.basedir" file="${ant.file}"/>
   
   
-  <property name="module.jdk.home.pushtoxnat" value="${project.jdk.home}"/>
-  <property name="module.jdk.bin.pushtoxnat" value="${project.jdk.bin}"/>
-  <property name="module.jdk.classpath.pushtoxnat" value="${project.jdk.classpath}"/>
+  <property name="module.jdk.home.simpleupload" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.simpleupload" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.simpleupload" value="${project.jdk.classpath}"/>
   
-  <property name="compiler.args.pushtoxnat" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
+  <property name="compiler.args.simpleupload" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
   
-  <property name="pushtoxnat.output.dir" value="${module.pushtoxnat.basedir}/out/production/non-dicom-uploader"/>
-  <property name="pushtoxnat.testoutput.dir" value="${module.pushtoxnat.basedir}/out/test/non-dicom-uploader"/>
+  <property name="simpleupload.output.dir" value="${module.simpleupload.basedir}/out/production/non-dicom-uploader"/>
+  <property name="simpleupload.testoutput.dir" value="${module.simpleupload.basedir}/out/test/non-dicom-uploader"/>
   
-  <path id="pushtoxnat.module.bootclasspath">
+  <path id="simpleupload.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
   </path>
   
-  <path id="pushtoxnat.module.production.classpath">
-    <path refid="${module.jdk.classpath.pushtoxnat}"/>
+  <path id="simpleupload.module.production.classpath">
+    <path refid="${module.jdk.classpath.simpleupload}"/>
   </path>
   
-  <path id="pushtoxnat.runtime.production.module.classpath">
-    <pathelement location="${pushtoxnat.output.dir}"/>
+  <path id="simpleupload.runtime.production.module.classpath">
+    <pathelement location="${simpleupload.output.dir}"/>
   </path>
   
-  <path id="pushtoxnat.module.classpath">
-    <path refid="${module.jdk.classpath.pushtoxnat}"/>
-    <pathelement location="${pushtoxnat.output.dir}"/>
+  <path id="simpleupload.module.classpath">
+    <path refid="${module.jdk.classpath.simpleupload}"/>
+    <pathelement location="${simpleupload.output.dir}"/>
   </path>
   
-  <path id="pushtoxnat.runtime.module.classpath">
-    <pathelement location="${pushtoxnat.testoutput.dir}"/>
-    <pathelement location="${pushtoxnat.output.dir}"/>
+  <path id="simpleupload.runtime.module.classpath">
+    <pathelement location="${simpleupload.testoutput.dir}"/>
+    <pathelement location="${simpleupload.output.dir}"/>
   </path>
   
   
-  <patternset id="excluded.from.module.pushtoxnat">
+  <patternset id="excluded.from.module.simpleupload">
     <patternset refid="ignored.files"/>
   </patternset>
   
-  <patternset id="excluded.from.compilation.pushtoxnat">
-    <patternset refid="excluded.from.module.pushtoxnat"/>
+  <patternset id="excluded.from.compilation.simpleupload">
+    <patternset refid="excluded.from.module.simpleupload"/>
   </patternset>
   
   
-  <target name="compile.module.pushtoxnat" depends="compile.module.pushtoxnat.production,compile.module.pushtoxnat.tests" description="Compile module PushToXNAT"/>
+  <target name="compile.module.simpleupload" depends="compile.module.simpleupload.production,compile.module.simpleupload.tests" description="Compile module PushToXNAT"/>
   
-  <target name="compile.module.pushtoxnat.production" depends="register.custom.compilers" description="Compile module PushToXNAT; production classes"/>
+  <target name="compile.module.simpleupload.production" depends="register.custom.compilers" description="Compile module PushToXNAT; production classes"/>
   
-  <target name="compile.module.pushtoxnat.tests" depends="register.custom.compilers,compile.module.pushtoxnat.production" description="compile module PushToXNAT; test classes" unless="skip.tests"/>
+  <target name="compile.module.simpleupload.tests" depends="register.custom.compilers,compile.module.simpleupload.production" description="compile module PushToXNAT; test classes" unless="skip.tests"/>
   
-  <target name="clean.module.pushtoxnat" description="cleanup module">
-    <delete dir="${pushtoxnat.output.dir}"/>
-    <delete dir="${pushtoxnat.testoutput.dir}"/>
+  <target name="clean.module.simpleupload" description="cleanup module">
+    <delete dir="${simpleupload.output.dir}"/>
+    <delete dir="${simpleupload.testoutput.dir}"/>
   </target>
   
   <target name="init" description="Build initialization">
     <!-- Perform any build initialization in this target -->
   </target>
   
-  <target name="clean" depends="clean.module.pushtoxnat" description="cleanup all"/>
+  <target name="clean" depends="clean.module.simpleupload" description="cleanup all"/>
   
-  <target name="build.modules" depends="init, clean, compile.module.pushtoxnat" description="build all modules"/>
+  <target name="build.modules" depends="init, clean, compile.module.simpleupload" description="build all modules"/>
   
   <target name="init.artifacts">
     <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
-    <property name="artifact.output.pushtoxnat" value="${basedir}/out/artifacts/non-dicom-uploader"/>
+    <property name="artifact.output.simpleupload" value="${basedir}/out/artifacts/non-dicom-uploader"/>
     <mkdir dir="${artifacts.temp.dir}"/>
     <property name="temp.jar.path.PushToXNAT.jar" value="${artifacts.temp.dir}/non-dicom-uploader.jar"/>
   </target>
   
-  <target name="artifact.pushtoxnat" depends="init.artifacts" description="Build &#39;PushToXNAT&#39; artifact">
-    <property name="artifact.temp.output.pushtoxnat" value="${artifacts.temp.dir}/non-dicom-uploader"/>
-    <mkdir dir="${artifact.temp.output.pushtoxnat}"/>
+  <target name="artifact.simpleupload" depends="init.artifacts" description="Build &#39;PushToXNAT&#39; artifact">
+    <property name="artifact.temp.output.simpleupload" value="${artifacts.temp.dir}/non-dicom-uploader"/>
+    <mkdir dir="${artifact.temp.output.simpleupload}"/>
     <jar destfile="${temp.jar.path.PushToXNAT.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
       <zipfileset file="${basedir}/META-INF/MANIFEST.MF" prefix="META-INF"/>
       <zipfileset file="${basedir}/app.css" prefix="META-INF/resources/pages"/>
@@ -186,13 +186,13 @@
       <zipfileset file="${basedir}/xnat_power_small.jpg" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/resource_extension_map.JSON" prefix="META-INF/resources/pages"/>
     </jar>
-    <copy file="${temp.jar.path.PushToXNAT.jar}" tofile="${artifact.temp.output.pushtoxnat}/non-dicom-uploader.jar"/>
+    <copy file="${temp.jar.path.PushToXNAT.jar}" tofile="${artifact.temp.output.simpleupload}/non-dicom-uploader.jar"/>
   </target>
   
-  <target name="build.all.artifacts" depends="artifact.pushtoxnat" description="Build all artifacts">
-    <mkdir dir="${artifact.output.pushtoxnat}"/>
-    <copy todir="${artifact.output.pushtoxnat}">
-      <fileset dir="${artifact.temp.output.pushtoxnat}"/>
+  <target name="build.all.artifacts" depends="artifact.simpleupload" description="Build all artifacts">
+    <mkdir dir="${artifact.output.simpleupload}"/>
+    <copy todir="${artifact.output.simpleupload}">
+      <fileset dir="${artifact.temp.output.simpleupload}"/>
     </copy>
     
     <!-- Delete temporary files -->
