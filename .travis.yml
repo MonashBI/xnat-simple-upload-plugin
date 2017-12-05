@@ -1,0 +1,9 @@
+language: java
+script: ant build.all.artifacts
+deploy:
+  provider: releases
+  api_key: "0421f397e0358e2f99514fc519dd410c63b1aae5"
+  file: "artifacts.zip"
+  skip_cleanup: true
+  on:
+    tags: true
