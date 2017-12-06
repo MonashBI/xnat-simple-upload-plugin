@@ -1,8 +1,11 @@
 language: java
+before_script:
+  - composer self-update -q
+  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
+  - composer show -i
 script: ant build.all.artifacts
 deploy:
   provider: releases
-  api_key: "0421f397e0358e2f99514fc519dd410c63b1aae5"
   file: "artifacts.zip"
   skip_cleanup: true
   on:
