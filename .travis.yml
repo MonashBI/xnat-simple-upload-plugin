@@ -1,12 +1,11 @@
 language: java
-before_script:
-  - composer self-update -q
-  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
-  - composer show -i
 script: ant build.all.artifacts
 deploy:
   provider: releases
-  file: "artifacts.zip"
+  file: artifacts.zip
   skip_cleanup: true
   on:
     tags: true
+env:
+  global:
+    secure: OE7u2fzQ4Qni48zSc61Euv+VXQhIk6c7HpDNuMEGHb9lRdLQ9stIyxjajWsO8aT6mS4PcrbmJ0bVATrkXnUk1yD1FYPvhdBt+SUeizv3nYZZkWttNnQXUpz0Zx0VvkkExV6L2fbF4EwB/zb2cHMZqxXYtG9CPCCKqdOx3wJBySYf1Wtvk3fbpC/xE5RAHEALLxHM7da8Zaa+XoEM0n3mMHpu4RX20PDMvLL2KlpuxHRZmXBf+TKcApfBevpdmhNA07ELzY4omjiZCisGKsCQEHsfqdYxgpAYDJqrbo81lecxRJLzS8vfgKw8Y1L/+FMUjpti9mS9rh+gfmzp1YMc5cOdVNhuaZ5gzFyJ9WL8IsGJ/USZkQiMVg1DVMrtLTyABS5msLVufxDD+IKfUstoMrx3TDwHZiaH1d3ZjsZorN21BKYEkAtuzeiGkGulqEPQSEeWQ8rf86N8gK+MGWLb0x2poMw2euOL3Dkpv+9ucH1d3jkH0vejkbszI3i+S8rrpc7wzN2UJFZnBmdNTLTT5QnMUGElvlqf9GScuQnjmrgPJroAWSA6NRGZsnfSs/T207cK+yUSSW4F3Bih7HUG8ByxJirRhtHd7El7IAAjVdQHou+Tmg9G2W2Mt2xtwCmrKpLvKH70mz45q8WlyttaEEJBs7qpvBCg3D8R5xGGcNA=
