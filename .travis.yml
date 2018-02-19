@@ -1,5 +1,8 @@
 language: java
 script: ant build.all.artifacts
+before_deploy:
+  # Set up git user name and tag this commit
+  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 deploy:
   provider: releases
   api_key:
