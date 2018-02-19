@@ -186,7 +186,7 @@
       <zipfileset file="${basedir}/xnat_power_small.jpg" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/resource_extension_map.JSON" prefix="META-INF/resources/pages"/>
     </jar>
-    <copy file="${temp.jar.path.PushToXNAT.jar}" tofile="${artifact.temp.output.simpleupload}/non-dicom-uploader.jar"/>
+    <copy file="${temp.jar.path.PushToXNAT.jar}" tofile="non-dicom-uploader.jar"/>
   </target>
   
   <target name="build.all.artifacts" depends="artifact.simpleupload" description="Build all artifacts">
