@@ -182,7 +182,7 @@
       <zipfileset file="${basedir}/app.css" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/jquery.min.js" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/logo.png" prefix="META-INF/resources/pages"/>
-      <zipfileset file="${basedir}/non-dicom-upload.html" prefix="META-INF/resources/pages"/>
+      <zipfileset file="${basedir}/simple-upload.html" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/xnat_power_small.jpg" prefix="META-INF/resources/pages"/>
       <zipfileset file="${basedir}/resource_extension_map.JSON" prefix="META-INF/resources/pages"/>
     </jar>
