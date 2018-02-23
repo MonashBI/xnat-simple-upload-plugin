@@ -9,7 +9,7 @@ deploy:
   provider: releases
   api_key:
     secure: HO9CqjTR4h0sQN67o24FQlLfgaSWV2c9IDKl8QZkKhrex9/jnXjrw1HBC7QGcVTjxSvoJc4QbGD75lBEVMKfU7CWwGt7vTnz6zE/UIEynl3buKkWWJ6rNz0gAJY/C2zO+zaR7Zdlp7mVkG8E+SuhvEXxjdR3FmjergQpOLQez5eNk66t0uPN5JPhr5EVENbwnpltlVhlqOxfg6YPjadT/kgpVXTkewDfaXsVhplhIXOm+wgOUjvpF5Gib+qXsfichEr9ofQO+mWNiPMXYX4NROr19byTmE7wwSxyYwtBxfAMdm6ByVzLlaHvBNJlyAhxdyOAPFX28gpVm7vDdlEPfPOM/41kV9JRmvSjMQfiSRDqay6qOdn6VdPZdeSPfrhk81GWyyQmWiY+ewVmeAFAWXNrZvumjzoOsE6t6DLeUnii8DVlTk4SouYtYsVIpir8OdWJTAZndaz72FOrtNid+mrZ28CsLbOB3slf2w96k3xBs/F8FoLH5FUCpe2PIsJ2rmDE14opmkRydmYtuDAe9RcUjvJaFvo5gKIr+qzRAjPweT3S+hXoK0EC8kS8p3ovgFHDcZrWWM2kbJ/MMJaslbZFqFqlufniIY+7NpueQpSpIHmRhNGmXAEMnD1Db2fHqRL10GusVu/8ysIWvQgDZq/W1UsLy/t3A0vo/8TYnnw=
-  file: non-dicom-uploader.jar
+  file: build/libs/xnat-simple-upload-plugin-2.0.0.jar
   skip_cleanup: true
   on:
     tags: true
