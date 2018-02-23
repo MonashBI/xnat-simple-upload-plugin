@@ -1,5 +1,7 @@
 language: java
-script: ant build.all.artifacts
+#script: gradle build
+before_install:
+  - chmod +x gradlew
 before_deploy:
   # Set up git user name and tag this commit
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"

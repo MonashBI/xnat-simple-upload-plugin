@@ -1,0 +1,43 @@
+#* @vtlvariable name="dateTime" type="java.lang.String" *#
+$page.setTitle("Simple Upload Plugin")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+
+<div id="login_box" style="float: none; margin-top: 20px;margin-left: 40%">
+    <form name="form1"  class="friendlyForm" id="login_form">
+
+        <!-- username and password -->
+        <p><label for="userName">XNAT User Name</label>
+            <input type="text" id="userName" name="userName"></p>
+        <p><label for="password">XNAT User Password</label>
+            <input type="password" id="password" name="password">
+            <span id="successfulAuth" style="color:green; display:none">Authentication Successful</span>
+            <span id="unSuccessfulAuth" style="color:red; display:none">Please check XNAT username and password</span>
+        </p>
+
+        <!-- SessionName, datasetName -->
+        <p><label for="sessionName">Session Name</label>
+            <input type="text" id="sessionName" name="sessionName">
+            <input type="checkbox" id="createSession" name="createSession" value="CreateSession" disabled>Create Session</p>
+        </p>
+
+        <p><label for="datasetName">Dataset Name</label>
+            <input type="text" id="datasetName" name="datasetName"></p>
+
+        <p><label for="filePath">File Path</label>
+            <input type="file" name="filePath"></p>
+        <div class="progress" style="display:none">
+            <div>File upload progress: </div>
+            <div class="progress-bar progress-bar-success myprogress" role="progressbar" style="width:0%">0%</div>
+        </div>
+
+        <div class="msg"></div>
+        <p class="form-submit">
+            <button class="submit btn" id="sendButton" type="submit" name="Send">Send</button>
+        </p>
+        <!-- Issue with CSRF token
+        <input type="hidden" name="XNAT_CSRF" value="">
+        -->
+    </form>
+</div>
+                                                                                                                                          
