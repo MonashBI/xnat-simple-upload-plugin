@@ -28,7 +28,7 @@ $page.setVlinkColor($ui.vlink)
             <input type="checkbox" id="inferResourceType" name="inferResourceType" value="inferResourceType" checked>Infer from File extension</p>
         </p>
         <p><label for="filePath">File Path</label>
-            <input type="file" name="filePath"></p>
+            <input type="file" name="filePath" multiple></p>
         <div class="progress" style="display:none">
             <div>File upload progress: </div>
             <div class="progress-bar progress-bar-success myprogress" role="progressbar" style="width:0%">0%</div>

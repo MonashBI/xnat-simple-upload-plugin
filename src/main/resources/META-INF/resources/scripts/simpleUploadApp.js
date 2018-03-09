@@ -61,6 +61,7 @@ $(document).ready(function() {
             //validate sessionId and dataset
             //create dataset
         }
+        //create dataset and upload files
         $.ajax({
             type: 'PUT',
             url: XNAT_URL+'data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'?xsiType=xnat:mrScanData&XNAT_CSRF='+csrfToken,
@@ -74,7 +75,7 @@ $(document).ready(function() {
             },
             success: function(response, status, xhr) {
                 console.log(response.status)
-                //upload file
+                //upload files
                 uploadFile(projectId,subjectId,sessionName,datasetName);
             },
             error: function(response) {
@@ -122,53 +123,54 @@ $(document).ready(function() {
         });
     }
     function uploadFile(projectId, subjectId, sessionName,datasetName){
-        var form = new FormData();
         //form.append("fileName", "app.css");
-        var file = $('input[type=file]')[0].files[0];
-        form.append('file', file);
-        var fileName = file.name;
-        var extension = getExtension(fileName);
-        console.log(extension)
-        var resourceType = getResourceType(extension);
-        console.log(resourceType);
-        $.ajax({
-            type: 'POST',
-            url: XNAT_URL +'data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'/resources/'+resourceType+'/files/'+fileName+'?XNAT_CSRF='+csrfToken,
-            xhrFields: {
-                withCredentials: true
-            },
-            //Form data
-            "processData": false,
-            "contentType": false,
-            "mimeType": "multipart/form-data",
-            "data": form,
-            xhr: function () {
-                var xhr = new window.XMLHttpRequest();
-                xhr.upload.addEventListener("progress", function (evt) {
-                    if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
-                        percentComplete = parseInt(percentComplete * 100);
-                        $('.myprogress').text(percentComplete + '%');
-                        $('.progress').css({'display':'block'});
-                        $('.myprogress').css('width', percentComplete + '%');
-                    }
-                }, false);
-                return xhr;
-            },
-            success: function(response, status, xhr) {
-                //console.log(response.status)
-                $('.msg').css({'color':'green'});
-
-                $('.msg').text(fileName+" uploaded successfully");
-                $(':input[type="submit"]').prop('disabled', false);
-                //alert("file uploaded successfully");
-                $("#login_form").trigger('reset');
-            },
-            error: function(response) {
-                console.log(response)
-                alert("Could not upload file ..." +response.status);
-            }
-        });
+        var fileList = $('input[type=file]')[0].files;
+        for(i=0;i<fileList.length;i++){
+            var form = new FormData();
+            form.append('file', fileList[i]);
+            var fileName = fileList[i].name;
+            console.log(fileName);
+            var extension = getExtension(fileName);
+            var resourceType = getResourceType(extension);
+            console.log(resourceType);
+            $.ajax({
+                type: 'POST',
+                url: XNAT_URL +'data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'/resources/'+resourceType+'/files/'+fileName+'?XNAT_CSRF='+csrfToken,
+                xhrFields: {
+                    withCredentials: true
+                },
+                //Form data
+                "processData": false,
+                "contentType": false,
+                "mimeType": "multipart/form-data",
+                "data": form,
+                xhr: function () {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function (evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            percentComplete = parseInt(percentComplete * 100);
+                            $('.myprogress').text(percentComplete + '%');
+                            $('.progress').css({'display':'block'});
+                            $('.myprogress').css('width', percentComplete + '%');
+                        }
+                    }, false);
+                    return xhr;
+                },
+                success: function(response, status, xhr) {
+                    //console.log(response.status)
+                    $('.msg').css({'color':'green'});
+                    $('.msg').text(fileName+" uploaded successfully");
+                    //alert("file uploaded successfully");
+                },
+                error: function(response) {
+                    console.log(response)
+                    alert("Could not upload file ..." +response.status);
+                }
+            });
+        }
+        $(':input[type="submit"]').prop('disabled', false);
+        $("#login_form").trigger('reset');
     }
     function getExtension(fileName) {
         var firstIndexofDot = fileName.indexOf(".");
