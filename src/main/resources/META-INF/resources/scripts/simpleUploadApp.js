@@ -3,8 +3,6 @@
 var XNAT_URL = XNAT.url.rootUrl() ;
 var resource_extension_map = {};
 var resource_extension_map_reverse = {};
-//for testing
-//var XNAT_URL = 'http://118.138.240.190/xnat-web-1.7.3';
 
 $(document).ready(function() {
     // TODO: prevent forced yellow input background in chrome
@@ -27,15 +25,11 @@ $(document).ready(function() {
         "DAT": ".dat",
         "TEXT": ".txt",
         "TAR_GZ": ".tar.gz"};
-
-    var parsed_resource_extension_map = JSON.parse(JSON.stringify(extension_map));
-    console.log(parsed_resource_extension_map);
-    $.each( parsed_resource_extension_map, function( key, val ) {
-        resource_extension_map[val] = key;
-    });
+    resource_extension_map = JSON.stringify(extension_map)
     console.log(resource_extension_map);
     //submit form
     $("#sendButton").click(function(event) {
+        $("#login_form :input").prop("disabled", true);
         event.preventDefault();
         //alert("Test")
         $('#layout_content2').css('display', 'none');
@@ -52,11 +46,8 @@ $(document).ready(function() {
         var subjectId = projectId+'_'+split[1];
         //check if create session is true
         if($('#createSession').is(':checked')){
-            //create subject
-            createSubject(projectId,subjectId);
-            //create session
-            var sessionId = sessionName;
-            createSession(projectId,subjectId);
+            //create subject then create session
+            createSubject(projectId,subjectId).then(createSession(projectId,subjectId,sessionName));
         }else{
             //validate sessionId and dataset
             //create dataset
@@ -75,8 +66,13 @@ $(document).ready(function() {
             },
             success: function(response, status, xhr) {
                 console.log(response.status)
-                //upload files
-                uploadFile(projectId,subjectId,sessionName,datasetName);
+                //upload file or files
+                var fileList = $('input[type=file]')[0].files;
+                if(fileList.length == 1){
+                    uploadFile(projectId,subjectId,sessionName,datasetName);
+                }else{
+                    uploadFiles(projectId,subjectId,sessionName,datasetName)
+                }
             },
             error: function(response) {
                 console.log(response)
@@ -84,9 +80,9 @@ $(document).ready(function() {
         });
     });
     function createSubject(projectId, subjectId){
-        $.ajax({
+        return $.ajax({
             type: 'PUT',
-            url: XNAT_URL+'/data/archive/projects/'+projectId+'/subjects/'+subjectId,
+            url: XNAT_URL+'data/archive/projects/'+projectId+'/subjects/'+subjectId+'?XNAT_CSRF='+csrfToken,
             xhrFields: {
                 withCredentials: true
             },
@@ -103,10 +99,10 @@ $(document).ready(function() {
             }
         });
     }
-    function createSession(projectId, subjectId){
-        $.ajax({
+    function createSession(projectId, subjectId, sessionName){
+        return $.ajax({
             type: 'PUT',
-            url: XNAT_URL+'/data/projects/'+projectId+'/subjects/'+subjectId+'/experiments/?xnat:mrSessionData/',
+            url: XNAT_URL+'data/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'?xsiType=xnat:mrSessionData?XNAT_CSRF='+csrfToken,
             xhrFields: {
                 withCredentials: true
             },
@@ -123,19 +119,68 @@ $(document).ready(function() {
         });
     }
     function uploadFile(projectId, subjectId, sessionName,datasetName){
-        //form.append("fileName", "app.css");
-        var fileList = $('input[type=file]')[0].files;
-        for(i=0;i<fileList.length;i++){
+
+        var form = new FormData();
+        var file = $('input[type=file]')[0].files[0];
+        form.append('file', file);
+        var fileName = file.name;
+        console.log(fileName);
+        var extension = getExtension(fileName);
+        var resourceType = getResourceType(extension);
+        console.log(resourceType);
+        $.ajax({
+            type: 'POST',
+            url: XNAT_URL +'data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'/resources/'+resourceType+'/files/'+fileName+'?XNAT_CSRF='+csrfToken,
+            xhrFields: {
+                withCredentials: true
+            },
+            //Form data
+            "processData": false,
+            "contentType": false,
+            "mimeType": "multipart/form-data",
+            "data": form,
+            "async": true,
+            xhr: function () {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(evt){
+                    if(evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        percentComplete = parseInt(percentComplete * 100);
+                        $('.myprogress').text(percentComplete + '%');
+                        $('#progress_bar').css({'display':'block'});
+                        $('.progress').css({'display':'block'});
+                        $('.myprogress').css('width', percentComplete + '%');
+                    }
+                },false);
+                return xhr;
+            },
+            success: function(response, status, xhr) {
+                $('.msg').css({'color':'green'});
+                $('.msg').text(fileName+" uploaded successfully");
+                //$('.msg').css({'display':'none'});
+                $(':input[type="submit"]').prop('disabled', false);
+                $("#login_form").trigger('reset');
+                location.reload();
+                //alert("file uploaded successfully");
+            },
+            error: function(response) {
+                console.log(response)
+                alert("Could not upload file ..." +response.status);
+            }
+        });
+    }
+
+    function uploadFiles(projectId,subjectId,sessionName,datasetName) {
+        var files = $('input[type=file]')[0].files;
+        for(i=0;i<files.length;i++) {
+            fileName = files[i].name
+            $('.msg').css({'color':'green'});
+            $('.msg').text("uploading "+ fileName);
             var form = new FormData();
-            form.append('file', fileList[i]);
-            var fileName = fileList[i].name;
-            console.log(fileName);
-            var extension = getExtension(fileName);
-            var resourceType = getResourceType(extension);
-            console.log(resourceType);
+            form.append('file', files[i]);
             $.ajax({
                 type: 'POST',
-                url: XNAT_URL +'data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'/resources/'+resourceType+'/files/'+fileName+'?XNAT_CSRF='+csrfToken,
+                url: XNAT_URL +'data/archive/projects/'+projectId+'/subjects/'+subjectId+'/experiments/'+sessionName+'/scans/'+datasetName+'/resources/'+'undefined'+'/files/'+fileName+'?XNAT_CSRF='+csrfToken,
                 xhrFields: {
                     withCredentials: true
                 },
@@ -144,23 +189,12 @@ $(document).ready(function() {
                 "contentType": false,
                 "mimeType": "multipart/form-data",
                 "data": form,
-                xhr: function () {
-                    var xhr = new window.XMLHttpRequest();
-                    xhr.upload.addEventListener("progress", function (evt) {
-                        if (evt.lengthComputable) {
-                            var percentComplete = evt.loaded / evt.total;
-                            percentComplete = parseInt(percentComplete * 100);
-                            $('.myprogress').text(percentComplete + '%');
-                            $('.progress').css({'display':'block'});
-                            $('.myprogress').css('width', percentComplete + '%');
-                        }
-                    }, false);
-                    return xhr;
-                },
+                "async": false,
+
                 success: function(response, status, xhr) {
-                    //console.log(response.status)
                     $('.msg').css({'color':'green'});
                     $('.msg').text(fileName+" uploaded successfully");
+                    //$('.msg').css({'display':'none'});
                     //alert("file uploaded successfully");
                 },
                 error: function(response) {
@@ -171,6 +205,7 @@ $(document).ready(function() {
         }
         $(':input[type="submit"]').prop('disabled', false);
         $("#login_form").trigger('reset');
+        location.reload();
     }
     function getExtension(fileName) {
         var firstIndexofDot = fileName.indexOf(".");
@@ -187,7 +222,7 @@ var project_id ;
 var experiment_id;
 var xsiType;
 var datasetName;
-$("#sessionID").on('input autocompletechange',function(e) {
+$("#sessionID").focusout(function(e) {
     var sessionID = $("#sessionID").val();
     $.ajax({
         type: 'GET',
@@ -230,7 +265,7 @@ $("#inferProjectID").change(function(){
    if(this.checked && "" !== sessionID) {
       var projectName = sessionID.split("_")[0]
        $("#projectName").val(projectName);
-       $("#projectName").trigger("autocompletechange");
+       $("#projectName").trigger("focusout");
    }
 });
 $("#inferSubjectID").change(function(){
@@ -238,10 +273,24 @@ $("#inferSubjectID").change(function(){
     if(this.checked && "" !== sessionID) {
         var subjectID = sessionID.split("_")[0]+"_"+sessionID.split("_")[1]
         $("#SubjectID").val(subjectID);
-        $("#SubjectID").trigger("autocompletechange");
+        $("#SubjectID").trigger("focusout");
     }
 });
-$("#projectName").on('input autocompletechange',function(e) {
+$('input[type=file]').change(function(e){
+    var file_count = $(this).get(0).files.length
+    console.log(file_count)
+    if (file_count > 1 ){
+        //disable checkbox
+        $("#inferResourceType").prop("disabled", true)
+    }else{
+        //display file format
+        var file = $(this).get(0).files[0];
+        var extension = file.name.substr( (file.name.lastIndexOf('.') +1) );
+        console.log(extension)
+        $("#ResourceType").val(extension)
+    }
+});
+$("#projectName").focusout(function(e) {
     var projectName = $("#projectName").val();
     $.ajax({
         type: 'GET',
@@ -271,7 +320,7 @@ $("#projectName").on('input autocompletechange',function(e) {
         }
     });
 });
-$("#SubjectID").on('input autocompletechange',function(e) {
+$("#SubjectID").focusout (function(e) {
     var subjectID = $("#SubjectID").val();
     var projectName = $("#projectName").val();
     $.ajax({
@@ -343,4 +392,5 @@ $("#datasetName").on('input',function(e) {
     }
 
 });
+
 });

@@ -3,6 +3,7 @@
 $page.setTitle("Simple Upload Plugin")
 $page.setLinkColor($ui.alink)
 $page.setVlinkColor($ui.vlink)
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet"/>
 <div id="login_box" style="float: none; margin-top: 20px;margin-left: 40%">
     <form name="form1"  class="friendlyForm" id="login_form" action="">
         <!-- username and password -->
@@ -29,9 +30,8 @@ $page.setVlinkColor($ui.vlink)
         </p>
         <p><label for="filePath">File Path</label>
             <input type="file" name="filePath" multiple></p>
-        <div class="progress" style="display:none">
-            <div>File upload progress: </div>
-            <div class="progress-bar progress-bar-success myprogress" role="progressbar" style="width:0%">0%</div>
+        <div class="progress">
+            <div id='progress_bar' class="progress-bar progress-bar-success myprogress" role="progressbar" style="width:0%">0%</div>
         </div>
 
         <div class="msg"></div>
@@ -42,3 +42,4 @@ $page.setVlinkColor($ui.vlink)
 
 </div>
 <script src="$content.getURI("scripts/simpleUploadApp.js")"></script>
+
