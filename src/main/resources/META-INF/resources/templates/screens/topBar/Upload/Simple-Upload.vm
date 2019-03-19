@@ -1,0 +1,2 @@
+<!-- Sequence: 10 -->
+<li><a href=$link.setPage("SimpleUploadPlugin.vm")>Simple Upload</a></li>

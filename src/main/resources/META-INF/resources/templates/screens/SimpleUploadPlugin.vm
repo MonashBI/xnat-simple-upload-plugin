@@ -1,0 +1,45 @@
+#* @vtlvariable name="dateTime" type="java.lang.String" *#
+#* @vtlvariable name="content" type="org.apache.turbine.services.pull.tools.ContentTool" *#
+$page.setTitle("Simple Upload Plugin")
+$page.setLinkColor($ui.alink)
+$page.setVlinkColor($ui.vlink)
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet"/>
+<div id="login_box" style="float: none; margin-top: 20px;margin-left: 40%">
+    <form name="form1"  class="friendlyForm" id="login_form" action="">
+        <!-- username and password -->
+        <!-- SessionName, datasetName -->
+        <p><label for="sessionID">Session ID</label>
+            <input type="text" id="sessionID" name="sessionID">
+            <input type="checkbox" id="createSession" name="createSession" value="CreateSession" checked>Create Session</p>
+        </p>
+        <p><label for="projectName">Project ID</label>
+            <input type="text" id="projectName" name="projectName">
+            <input type="checkbox" id="inferProjectID" name="inferProjectID" value="inferProjectID" disabled>Infer from Session ID</p>
+        </p>
+        <p><label for="SubjectID">Subject ID</label>
+            <input type="text" id="SubjectID" name="SubjectID">
+            <input type="checkbox" id="inferSubjectID" name="inferSubjectID" value="inferSubjectID" disabled>Infer from Session ID</p>
+        </p>
+
+        <p><label for="datasetName">Dataset Name</label>
+            <input type="text" id="datasetName" name="datasetName"></p>
+
+        <p><label for="ResourceType">Resource Type</label>
+            <input type="text" id="ResourceType" name="ResourceType">
+            <input type="checkbox" id="inferResourceType" name="inferResourceType" value="inferResourceType" checked>Infer from File extension</p>
+        </p>
+        <p><label for="filePath">File Path</label>
+            <input type="file" name="filePath" multiple></p>
+        <div class="progress">
+            <div id='progress_bar' class="progress-bar progress-bar-success myprogress" role="progressbar" style="width:0%">0%</div>
+        </div>
+
+        <div class="msg"></div>
+        <p class="form-submit">
+            <button class="submit btn" id="sendButton" type="submit" name="Send">Send</button>
+        </p>
+    </form>
+
+</div>
+<script src="$content.getURI("scripts/simpleUploadApp.js")"></script>
+
